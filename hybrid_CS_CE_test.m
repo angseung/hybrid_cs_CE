@@ -16,7 +16,7 @@ seq = seq(:, 1 : K);
 FIRST_OPT = 0;
 SECOND_OPT = ~FIRST_OPT;
 
-U = eye(M); % Any unitary matrix 'U' could be...
+U = randU(M); % Any unitary matrix 'U' could be...
 
 if (FIRST_OPT)
     W_idt = [eye(M), zeros(M, Nr - M)];
@@ -80,7 +80,7 @@ Y = Z / P;
 
 %% Calculate X_bar for a basis set
 X_bar = pi * (-1 + (2 .* (0 : N - 1)) / N );
-theta_bar = acos(X_bar / pi);
+% theta_bar = acos(X_bar / pi);
 
 % A = zeros(Nr, N);
 % 
@@ -89,17 +89,17 @@ theta_bar = acos(X_bar / pi);
 % end
 
 %% Calculate estimated basis set x_hat
-PSI = W * A;
+% PSI = W * A;
 candidate_x = zeros(1, N);
 
 for i = 1 : N
     curr_psi = W * get_basis_vec(Nr, X_bar(i));
-    candidate_x(1, i) = (curr_psi' * Y * Y' * curr_psi) / (curr_psi' * curr_psi);
+    candidate_x(1, i) = (curr_psi' * Y * Y' * curr_psi) ./ (curr_psi' * curr_psi);
 end
 
 [x_hat_1, ~] = max(abs(candidate_x));
 
-x_hat_m = x_hat_1 + 2 * pi .* (2 : M) ./ M;
+x_hat_m = x_hat_1 + 2 * pi .* (1 : M - 1) ./ M;
 x_hat_m = [x_hat_1, x_hat_m];
 
 %% Calculate sparse vector 'S'
