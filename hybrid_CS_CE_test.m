@@ -28,7 +28,7 @@ elseif (SECOND_OPT)
     
     for i = 1 : M
         W_idt(i, :) = get_basis_vec(Nr, bm)';
-        bm = bm + (2 * pi * (i - 1)) / M;
+        bm = bm + (2 * pi * i) / M;
     end
     
 end
@@ -52,7 +52,7 @@ N_s = rx_node;
 A = [1];
 
 % Set antenna shape
-model.ant(Nr, tx_ant);
+[~, ~] = model.ant(Nr, tx_ant);
 N_tx = model.Ntx;
 N_rx = model.Nrx;
 
