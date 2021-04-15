@@ -11,6 +11,8 @@ snr = 10; % in dB scale
 
 seq = gen_zadoffchu(K + 1, M);
 seq = seq(:, 1 : K);
+% seq : (subcarrier k, symbols) shape...
+% then P = diag(seq(i, K))...
 
 %% Calculate W
 FIRST_OPT = 0;
@@ -65,8 +67,9 @@ for d = 1 : N_d
     r_H(:,:,1+(d-1)*N_rx:d*N_rx,:) = temp;
 end
 
-H = r_H(:,:,:,1);
-H = squeeze(sum(H, 1)).';
+h = squeeze(r_H(:,1,:,:));
+H = fft(h, K, 1);
+H = squeeze(H(:, :, 1)).';
 
 %% Calculate received signal Z
 Z = zeros(M, K);
@@ -80,21 +83,14 @@ Y = Z / P;
 
 %% Calculate X_bar for a basis set
 X_bar = pi * (-1 + (2 .* (0 : N - 1)) / N );
-% theta_bar = acos(X_bar / pi);
-
-% A = zeros(Nr, N);
-% 
-% for i = 1 : N
-%     A(:, i) = get_basis_vec(Nr, theta_bar(i));
-% end
 
 %% Calculate estimated basis set x_hat
-% PSI = W * A;
 candidate_x = zeros(1, N);
 
 for i = 1 : N
     curr_psi = W * get_basis_vec(Nr, X_bar(i));
-    candidate_x(1, i) = (curr_psi' * Y * Y' * curr_psi) ./ (curr_psi' * curr_psi);
+    candidate_x(1, i) = ...
+        (curr_psi' * Y * Y' * curr_psi) ./ (curr_psi' * curr_psi);
 end
 
 [x_hat_1, ~] = max(abs(candidate_x));
