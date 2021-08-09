@@ -67,7 +67,7 @@ for d = 1 : N_d
     r_H(:,:,1+(d-1)*N_rx:d*N_rx,:) = temp;
 end
 
-h = squeeze(r_H(:,1,:,:));
+h = squeeze(r_H(:,1,:,:)); % h : (path, time, Rx, Tx) shape...
 H = fft(h, K, 1);
 H = squeeze(H(:, :, 1)).';
 
@@ -75,7 +75,7 @@ H = squeeze(H(:, :, 1)).';
 Z = zeros(M, K);
 
 for i = 1 : M
-    P = diag(seq(i, :));
+    P = diag(seq(1, :));
     Z(i, :) = W(i, :) * awgn_noise(H * P, snr);
 end
 
@@ -93,7 +93,7 @@ for i = 1 : N
         (curr_psi' * Y * Y' * curr_psi) ./ (curr_psi' * curr_psi);
 end
 
-[x_hat_1, ~] = max(abs(candidate_x));
+[x_hat_1, ~] = max(candidate_x);
 
 x_hat_m = x_hat_1 + 2 * pi .* (1 : M - 1) ./ M;
 x_hat_m = [x_hat_1, x_hat_m];
